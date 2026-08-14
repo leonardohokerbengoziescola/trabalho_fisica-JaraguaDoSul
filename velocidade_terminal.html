@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Velocidade Terminal — Morro da Antena</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+ 
+  :root{
+    --twilight: #1C2B39;
+    --ridge: #3E6E80;
+    --gold: #E8B872;
+    --windsock: #D95F43;
+    --mist: #F5EFE6;
+    --panel: #23384A;
+    --panel-line: rgba(245,239,230,0.14);
+    --text-dim: rgba(245,239,230,0.62);
+  }
+ 
+  *{box-sizing:border-box; margin:0; padding:0;}
+ 
+  html,body{
+    background: var(--twilight);
+    color: var(--mist);
+    font-family:'IBM Plex Sans', sans-serif;
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+ 
+  body{
+    background:
+      radial-gradient(ellipse 120% 60% at 50% 0%, rgba(232,184,114,0.16), transparent 60%),
+      linear-gradient(180deg, #14212C 0%, #1C2B39 45%, #23384A 100%);
+  }
+ 
+  .sky{
+    position:relative;
+    width:100%;
+    padding: 3.2rem 1.5rem 0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+  }
+ 
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.72rem;
+    letter-spacing:0.22em;
+    text-transform:uppercase;
+    color: var(--gold);
+    margin-bottom: 0.9rem;
+    opacity:0.9;
+  }
+ 
+  h1{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size: clamp(1.9rem, 5vw, 3.1rem);
+    line-height:1.08;
+    max-width: 720px;
+    letter-spacing:-0.01em;
+  }
+ 
+  h1 span{ color: var(--gold); }
+ 
+  .subtitle{
+    max-width: 520px;
+    color: var(--text-dim);
+    font-size: 0.98rem;
+    line-height:1.55;
+    margin-top: 1.1rem;
+  }
+ 
+  /* --- ridge silhouette with antenna --- */
+  .ridge-wrap{
+    width:100%;
+    max-width: 980px;
+    margin-top: 2.4rem;
+    line-height:0;
+  }
+  .ridge-wrap svg{ width:100%; height:auto; display:block; }
+ 
+  .blink{
+    animation: blink 1.8s ease-in-out infinite;
+  }
+  @keyframes blink{
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.25; }
+  }
+ 
+  /* --- main panel --- */
+  main{
+    max-width: 980px;
+    margin: -1px auto 4rem;
+    padding: 0 1.5rem;
+  }
+ 
+  .instrument{
+    background: linear-gradient(180deg, var(--panel), #1B2E3C);
+    border: 1px solid var(--panel-line);
+    border-radius: 18px;
+    padding: 2.2rem;
+    box-shadow: 0 30px 60px -25px rgba(0,0,0,0.55);
+    display:grid;
+    grid-template-columns: 1fr 1.15fr;
+    gap: 2.4rem;
+  }
+ 
+  @media (max-width: 760px){
+    .instrument{ grid-template-columns: 1fr; padding: 1.5rem; }
+  }
+ 
+  .panel-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    display:flex;
+    align-items:center;
+    gap: 0.5rem;
+    margin-bottom: 1.3rem;
+  }
+  .panel-label::before{
+    content:'';
+    width: 6px; height: 6px;
+    background: var(--gold);
+    border-radius: 50%;
+    display:inline-block;
+  }
+ 
+  /* --- inputs column --- */
+  .field{ margin-bottom: 1.5rem; }
+  .field label{
+    display:flex;
+    justify-content: space-between;
+    align-items:baseline;
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    margin-bottom: 0.55rem;
+  }
+  .field label b{
+    font-family:'IBM Plex Mono', monospace;
+    color: var(--mist);
+    font-weight: 500;
+    font-size: 0.95rem;
+  }
+ 
+  input[type="range"]{
+    -webkit-appearance:none;
+    width:100%;
+    height: 4px;
+    background: rgba(245,239,230,0.16);
+    border-radius: 4px;
+    outline:none;
+  }
+  input[type="range"]::-webkit-slider-thumb{
+    -webkit-appearance:none;
+    width: 18px; height: 18px;
+    border-radius:50%;
+    background: var(--windsock);
+    border: 3px solid var(--mist);
+    cursor:pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  }
+  input[type="range"]::-moz-range-thumb{
+    width: 18px; height: 18px;
+    border-radius:50%;
+    background: var(--windsock);
+    border: 3px solid var(--mist);
+    cursor:pointer;
+  }
+ 
+  .num-input{
+    width: 100%;
+    background: rgba(0,0,0,0.2);
+    border: 1px solid var(--panel-line);
+    border-radius: 8px;
+    color: var(--mist);
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 0.95rem;
+    padding: 0.6rem 0.75rem;
+  }
+  .num-input:focus{ outline: 2px solid var(--gold); outline-offset: 1px; }
+ 
+  details{
+    margin-top: 1.6rem;
+    border-top: 1px solid var(--panel-line);
+    padding-top: 1.1rem;
+  }
+  summary{
+    cursor:pointer;
+    font-size: 0.82rem;
+    color: var(--gold);
+    font-family:'IBM Plex Mono', monospace;
+    letter-spacing:0.02em;
+    list-style:none;
+    display:flex;
+    align-items:center;
+    gap:0.4rem;
+  }
+  summary::-webkit-details-marker{ display:none; }
+  summary::before{
+    content:'▸';
+    display:inline-block;
+    transition: transform 0.2s ease;
+  }
+  details[open] summary::before{ transform: rotate(90deg); }
+  .adv-grid{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.1rem;
+    margin-top: 1.2rem;
+  }
+  .adv-grid .field{ margin-bottom: 0; }
+  .adv-grid label{ display:block; font-size:0.75rem; margin-bottom:0.4rem; }
+  .reset-btn{
+    margin-top: 1rem;
+    background:none;
+    border: 1px solid var(--panel-line);
+    color: var(--text-dim);
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    padding: 0.45rem 0.8rem;
+    border-radius: 6px;
+    cursor:pointer;
+    transition: all 0.15s ease;
+  }
+  .reset-btn:hover{ border-color: var(--gold); color: var(--gold); }
+ 
+  /* --- gauge column --- */
+  .gauge-col{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-start;
+  }
+ 
+  .gauge-wrap{ position:relative; width: 100%; max-width: 320px; }
+  .gauge-wrap svg{ width:100%; height:auto; display:block; }
+ 
+  .needle{
+    transform-origin: 160px 160px;
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+ 
+  .readout{
+    text-align:center;
+    margin-top: -1.6rem;
+  }
+  .readout .big{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size: 2.6rem;
+    letter-spacing:-0.02em;
+    color: var(--mist);
+  }
+  .readout .unit{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--gold);
+    letter-spacing: 0.08em;
+    margin-left: 0.3rem;
+  }
+  .readout .sub{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    margin-top: 0.3rem;
+  }
+ 
+  .stat-row{
+    display:flex;
+    gap: 0.9rem;
+    margin-top: 1.6rem;
+    width:100%;
+    max-width: 320px;
+  }
+  .stat{
+    flex:1;
+    background: rgba(0,0,0,0.18);
+    border: 1px solid var(--panel-line);
+    border-radius: 10px;
+    padding: 0.75rem;
+    text-align:center;
+  }
+  .stat .stat-val{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 1.05rem;
+    color: var(--mist);
+  }
+  .stat .stat-lbl{
+    font-size: 0.68rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 0.25rem;
+  }
+ 
+  footer{
+    text-align:center;
+    padding: 0 1.5rem 3rem;
+    color: var(--text-dim);
+    font-size: 0.78rem;
+    font-family:'IBM Plex Mono', monospace;
+    line-height:1.6;
+  }
+  footer a{ color: var(--gold); }
+ 
+  @media (prefers-reduced-motion: reduce){
+    .needle{ transition: none; }
+    .blink{ animation: none; }
+  }
+</style>
+</head>
+<body>
+ 
+<div class="sky">
+  <div class="eyebrow">Jaraguá do Sul · SC</div>
+  <h1>Velocidade terminal de queda no <span>Morro da Antena</span></h1>
+  <p class="subtitle">Informe a massa combinada de piloto e equipamento para estimar a velocidade de equilíbrio — o ponto em que o arrasto do parapente iguala o peso em queda livre.</p>
+ 
+  <div class="ridge-wrap">
+    <svg viewBox="0 0 980 180" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="ridgeFade" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#2E4E5E"/>
+          <stop offset="100%" stop-color="#23384A"/>
+        </linearGradient>
+      </defs>
+      <path d="M0,140 L120,90 L210,120 L320,55 L430,105 L560,70 L640,115 L760,60 L860,100 L980,80 L980,180 L0,180 Z" fill="url(#ridgeFade)"/>
+      <!-- antenna tower -->
+      <g transform="translate(320,55)">
+        <line x1="0" y1="0" x2="0" y2="-42" stroke="#8FA7B3" stroke-width="2"/>
+        <line x1="-10" y1="-16" x2="10" y2="-16" stroke="#8FA7B3" stroke-width="1.5"/>
+        <line x1="-7" y1="-30" x2="7" y2="-30" stroke="#8FA7B3" stroke-width="1.5"/>
+        <circle cx="0" cy="-46" r="3.2" fill="#D95F43" class="blink"/>
+      </g>
+      <!-- paraglider wing -->
+      <g transform="translate(560,42)">
+        <path d="M-26,6 Q0,-10 26,6 Q0,2 -26,6 Z" fill="#E8B872" opacity="0.9"/>
+        <line x1="-14" y1="6" x2="-4" y2="16" stroke="#E8B872" stroke-width="1"/>
+        <line x1="14" y1="6" x2="4" y2="16" stroke="#E8B872" stroke-width="1"/>
+        <circle cx="0" cy="18" r="1.6" fill="#E8B872"/>
+      </g>
+    </svg>
+  </div>
+</div>
+ 
+<main>
+  <div class="instrument">
+ 
+    <!-- LEFT: controls -->
+    <div class="controls-col">
+      <div class="panel-label">Piloto &amp; equipamento</div>
+ 
+      <div class="field">
+        <label for="massaRange">Massa total <b id="massaVal">85 kg</b></label>
+        <input type="range" id="massaRange" min="40" max="140" step="1" value="85">
+      </div>
+ 
+      <div class="field">
+        <label for="massaNum">Ajuste fino (kg)</label>
+        <input type="number" id="massaNum" class="num-input" min="30" max="200" step="0.5" value="85">
+      </div>
+ 
+      <details id="advDetails">
+        <summary>Parâmetros avançados</summary>
+        <div class="adv-grid">
+          <div class="field">
+            <label for="densidade">Densidade do ar (kg/m³)</label>
+            <input type="number" id="densidade" class="num-input" step="0.01" value="1.13">
+          </div>
+          <div class="field">
+            <label for="area">Área do parapente (m²)</label>
+            <input type="number" id="area" class="num-input" step="0.5" value="24">
+          </div>
+          <div class="field">
+            <label for="cd">Coeficiente de arrasto (Cd)</label>
+            <input type="number" id="cd" class="num-input" step="0.05" value="1.2">
+          </div>
+          <div class="field">
+            <label for="gravidade">Gravidade (m/s²)</label>
+            <input type="number" id="gravidade" class="num-input" step="0.01" value="9.81">
+          </div>
+        </div>
+        <button class="reset-btn" id="resetAdv" type="button">Restaurar padrões (EN‑B)</button>
+      </details>
+    </div>
+ 
+    <!-- RIGHT: gauge -->
+    <div class="gauge-col">
+      <div class="panel-label">Velocidade terminal</div>
+ 
+      <div class="gauge-wrap">
+        <svg viewBox="0 0 320 190" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="arcGrad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#3E6E80"/>
+              <stop offset="55%" stop-color="#E8B872"/>
+              <stop offset="100%" stop-color="#D95F43"/>
+            </linearGradient>
+          </defs>
+          <!-- background arc -->
+          <path d="M 20 160 A 140 140 0 0 1 300 160" fill="none" stroke="rgba(245,239,230,0.12)" stroke-width="14" stroke-linecap="round"/>
+          <!-- colored arc -->
+          <path d="M 20 160 A 140 140 0 0 1 300 160" fill="none" stroke="url(#arcGrad)" stroke-width="14" stroke-linecap="round" stroke-dasharray="440" stroke-dashoffset="0" opacity="0.85"/>
+          <!-- tick labels -->
+          <text x="20" y="180" fill="rgba(245,239,230,0.5)" font-family="IBM Plex Mono, monospace" font-size="10">20</text>
+          <text x="150" y="26" fill="rgba(245,239,230,0.5)" font-family="IBM Plex Mono, monospace" font-size="10" text-anchor="middle">55</text>
+          <text x="286" y="180" fill="rgba(245,239,230,0.5)" font-family="IBM Plex Mono, monospace" font-size="10" text-anchor="end">90 km/h</text>
+          <!-- needle -->
+          <g class="needle" id="needle">
+            <line x1="160" y1="160" x2="160" y2="40" stroke="#F5EFE6" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="160" cy="160" r="7" fill="#F5EFE6"/>
+            <circle cx="160" cy="160" r="3" fill="#1C2B39"/>
+          </g>
+        </svg>
+      </div>
+ 
+      <div class="readout">
+        <span class="big" id="vtKmh">—</span><span class="unit">km/h</span>
+        <div class="sub" id="vtMs">— m/s</div>
+      </div>
+ 
+      <div class="stat-row">
+        <div class="stat">
+          <div class="stat-val" id="pesoVal">—</div>
+          <div class="stat-lbl">Peso (N)</div>
+        </div>
+        <div class="stat">
+          <div class="stat-val" id="massaEcho">—</div>
+          <div class="stat-lbl">Massa (kg)</div>
+        </div>
+      </div>
+    </div>
+ 
+  </div>
+</main>
+ 
+<footer>
+  vt = √(2·peso / (ρ · A · Cd)) — modelo simplificado de arrasto em queda de equilíbrio, calibrado para parapente EN‑B.<br>
+  Referência de voo: Morro da Antena, Jaraguá do Sul — SC.
+</footer>
+ 
+<script>
+  const massaRange = document.getElementById('massaRange');
+  const massaNum = document.getElementById('massaNum');
+  const massaVal = document.getElementById('massaVal');
+  const densidadeEl = document.getElementById('densidade');
+  const areaEl = document.getElementById('area');
+  const cdEl = document.getElementById('cd');
+  const gravidadeEl = document.getElementById('gravidade');
+  const resetAdv = document.getElementById('resetAdv');
+ 
+  const needle = document.getElementById('needle');
+  const vtKmh = document.getElementById('vtKmh');
+  const vtMs = document.getElementById('vtMs');
+  const pesoVal = document.getElementById('pesoVal');
+  const massaEcho = document.getElementById('massaEcho');
+ 
+  const DEFAULTS = { densidade: 1.13, area: 24, cd: 1.2, gravidade: 9.81 };
+ 
+  // gauge maps 20–90 km/h across -90deg .. +90deg (needle rotation)
+  const GAUGE_MIN = 20, GAUGE_MAX = 90;
+ 
+  function clamp(v, min, max){ return Math.max(min, Math.min(max, v)); }
+ 
+  function calcular(){
+    const massa = parseFloat(massaNum.value) || 0;
+    const g = parseFloat(gravidadeEl.value) || DEFAULTS.gravidade;
+    const rho = parseFloat(densidadeEl.value) || DEFAULTS.densidade;
+    const area = parseFloat(areaEl.value) || DEFAULTS.area;
+    const cd = parseFloat(cdEl.value) || DEFAULTS.cd;
+ 
+    const peso = massa * g;
+    const vt_ms = Math.sqrt((2 * peso) / (rho * area * cd));
+    const vt_kh = vt_ms * 3.6;
+ 
+    vtKmh.textContent = vt_kh.toFixed(2);
+    vtMs.textContent = vt_ms.toFixed(2) + ' m/s';
+    pesoVal.textContent = peso.toFixed(1);
+    massaEcho.textContent = massa.toFixed(1);
+ 
+    const frac = clamp((vt_kh - GAUGE_MIN) / (GAUGE_MAX - GAUGE_MIN), 0, 1);
+    const angle = -90 + frac * 180;
+    needle.style.transform = `rotate(${angle}deg)`;
+  }
+ 
+  massaRange.addEventListener('input', () => {
+    massaNum.value = massaRange.value;
+    massaVal.textContent = massaRange.value + ' kg';
+    calcular();
+  });
+ 
+  massaNum.addEventListener('input', () => {
+    const v = clamp(parseFloat(massaNum.value) || 0, 40, 140);
+    massaRange.value = v;
+    massaVal.textContent = massaNum.value + ' kg';
+    calcular();
+  });
+ 
+  [densidadeEl, areaEl, cdEl, gravidadeEl].forEach(el => el.addEventListener('input', calcular));
+ 
+  resetAdv.addEventListener('click', () => {
+    densidadeEl.value = DEFAULTS.densidade;
+    areaEl.value = DEFAULTS.area;
+    cdEl.value = DEFAULTS.cd;
+    gravidadeEl.value = DEFAULTS.gravidade;
+    calcular();
+  });
+ 
+  calcular();
+</script>
+ 
+</body>
+</html>
